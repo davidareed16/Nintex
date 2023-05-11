@@ -97,7 +97,7 @@ export class EmbeddedAssureSign extends LitElement {
             }
         };
 
-        const response = await fetch('https://qa-account.assuresign.net/api/v3.7/authentication/apiUser', {
+        const response = await fetch('https://sb.assuresign.net/authentication/apiUser', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -196,5 +196,5 @@ export class EmbeddedAssureSign extends LitElement {
 }
 
 // registering the web component.
-const elementName = 'Embedded-AssureSign';
+const elementName = 'embedded-assuresign';
 customElements.define(elementName, EmbeddedAssureSign);
