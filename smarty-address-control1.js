@@ -1,5 +1,5 @@
 import { html, LitElement, css } from 'https://cdn.jsdelivr.net/gh/lit/dist@2/all/lit-all.min.js';
-const PLUGIN_NAME = 'smarty-address-new'
+const PLUGIN_NAME = 'smarty-address-control'
 
 export default class AddressAutoComplete extends LitElement {
 
@@ -38,6 +38,7 @@ export default class AddressAutoComplete extends LitElement {
         value: { type: String },
         labelName: {type: String },
         pageName: {type: String },
+        minChar: {type: Number}
     };
 
     static get properties() {
@@ -51,10 +52,10 @@ export default class AddressAutoComplete extends LitElement {
 
     static getMetaConfig() {
         return {
-            controlName: PLUGIN_NAME,
+            controlName: 'SmartyAddressControl',
             fallbackDisableSubmit: false,
             description: 'Smarty Streets US Address Autocomplete, Pro Edition Search Component',
-            groupName: 'Samples',
+            groupName: 'Lilly Plugins',
             version: '1.0',
             properties: {
                 apiKey: {
@@ -68,6 +69,10 @@ export default class AddressAutoComplete extends LitElement {
                 pageName: {
                     type: 'string',
                     title: 'Page Name'
+                },
+                minChar: {
+                    type: 'number',
+                    title: 'Min Char to enter'
                 },
                 value: {
                     type: 'string',
@@ -94,7 +99,7 @@ export default class AddressAutoComplete extends LitElement {
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
             <label class="nx-form-label nx-break-word nx-theme-label-1"><span class="nx-title label-style">${this.labelName}</span></label>
             <div class="input-group input-group-sm nx-zinc-control-input" id="input-container" style="line-height: 1rem;">            
-                <input type="text" class="form-control nx-theme-input-1 input-style" value="${this.inputValue}" @keyup=${this.updateInputValue} aria-label="address" id="address" style="font-size: 14px; padding: 7px 12px 7px 12px; ${inputStyle}" length="34"/>
+                <input type="text" class="form-control nx-theme-input-1 input-style" value="${this.inputValue}" @keyup=${this.updateInputValue} aria-label="address" id="address" style="font-size: 14px; padding: 7px 12px 7px 12px; ${inputStyle}" maxlength="34" autocomplete="off"/>
             </div>
             <div>
                 <ul class="list-group list-group-style">
@@ -105,7 +110,8 @@ export default class AddressAutoComplete extends LitElement {
     }
 
     handleInput(event) {
-        if (this.inputValue && this.inputValue.length >= 4) {
+        this.minChar = (this.minChar != null && this.minChar ? +this.minChar : 4);
+        if (this.inputValue && this.inputValue.length >= this.minChar) {
             this.getSmartyStreets();
         } else {
             this.addresses = [];
@@ -127,16 +133,9 @@ export default class AddressAutoComplete extends LitElement {
         };
         
         inputElement.value = addObj.street_line;
-        document.querySelector(`.${this.pageName}-user-city input`).value = addObj.city;
-        document.querySelector(`.${this.pageName}-user-city input`).focus();
-        document.querySelector(`.${this.pageName}-user-city input`).blur();
-        document.querySelector(`.${this.pageName}-user-state input`).value = addObj.state;
-        document.querySelector(`.${this.pageName}-user-state input`).focus();
-        document.querySelector(`.${this.pageName}-user-state input`).blur();
-        document.querySelector(`.${this.pageName}-user-zip input`).value = addObj.zipcode;
-        document.querySelector(`.${this.pageName}-user-zip input`).focus();
-        document.querySelector(`.${this.pageName}-user-zip input`).blur();
-//         this.inputValue = addObj.street_line;
+        this.updateFieldValue(`.${this.pageName}-user-city input`, addObj.city);
+        this.updateFieldValue(`.${this.pageName}-user-state input`, addObj.state);
+        this.updateFieldValue(`.${this.pageName}-user-zip input`, addObj.zipcode);
         const nintexEvent = new CustomEvent('ntx-value-change', args);
         this.dispatchEvent(nintexEvent);
     }
@@ -150,10 +149,27 @@ export default class AddressAutoComplete extends LitElement {
         });
         const result = await response.json();
         this.addresses = result.suggestions;
+        if(this.addresses.length == 0) {
+            const args = {
+                bubbles: true,
+                cancelable: false,
+                composed: true,
+                detail: this.inputValue,
+            };
+
+            const nintexEvent = new CustomEvent('ntx-value-change', args);
+            this.dispatchEvent(nintexEvent);
+        }
     }
 
     updateInputValue(event) {
         this.inputValue = event.srcElement.value;
+    }
+
+    updateFieldValue(selector, updatedValue) {
+        document.querySelector(selector).value = updatedValue;
+        document.querySelector(selector).focus();
+        document.querySelector(selector).blur();
     }
 
     constructor() {
