@@ -97,7 +97,7 @@ export class EmbeddedAssureSign extends LitElement {
             }
         };
 
-        const response = await fetch('https://sb.assuresign.net/authentication/apiUser', {
+        const response = await fetch('https://account.assuresign.net/authentication/apiUser', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -142,7 +142,7 @@ export class EmbeddedAssureSign extends LitElement {
             }
         }
         
-        const submit = await fetch('https://dev.assuresign.net/api/documentnow/v3.7/submit',
+        const submit = await fetch('https://sb.assuresign.net/api/documentnow/v3.7/submit',
         {
             method: 'POST',
             headers: {
@@ -156,7 +156,7 @@ export class EmbeddedAssureSign extends LitElement {
 
         const envelopeId = jsonSubmit.result.envelopeID;
         
-        const signingLinks = await fetch('https://dev.assuresign.net/api/documentnow/v3.7/envelope/'+ envelopeId +'/signingLinks',
+        const signingLinks = await fetch('https://sb.assuresign.net/api/documentnow/v3.7/envelope/'+ envelopeId +'/signingLinks',
             {
                 method: 'GET',
                 headers: {
