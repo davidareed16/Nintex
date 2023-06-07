@@ -121,7 +121,7 @@ export class EmbeddedAssureSign extends LitElement {
                         "templateID": this.assureSignTemplateId,
                         "values": [
                             {
-                                "name": "Envelope Name 2 ",
+                                "name": "Envelope Name",
                                 "value": this.envelopeName
                             },
                             {
@@ -129,16 +129,12 @@ export class EmbeddedAssureSign extends LitElement {
                                 "value": "en-US"
                             },
                             {
-                                "name": "Signer 1 Name",
+                                "name": "Patient Name",
                                 "value": this.signerName
                                 },
                             {
-                                "name": "Signer 1 Email",
+                                "name": "Patient Email",
                                 "value": this.signerEmail
-                            },
-                            {
-                                "name": "Signer 1 Phone",
-                                "value": this.signerPhone
                             }
                         ]
                     }
